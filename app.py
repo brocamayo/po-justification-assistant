@@ -45,12 +45,6 @@ st.markdown(
         .app-header h1 { margin: 0; font-size: 26px; font-weight: 700; }
         .app-header p  { margin: 5px 0 0; opacity: 0.80; font-size: 13px; }
 
-        .panel {
-            background: white;
-            border-radius: 10px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        }
 
         .section-card {
             background: white;
@@ -187,6 +181,7 @@ if not os.getenv("ANTHROPIC_API_KEY"):
 if "justification" not in st.session_state:
     st.session_state.justification: dict | None = None
     st.session_state.last_input: str = ""
+    st.session_state.form_reset: int = 0
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Single input + output layout
@@ -194,44 +189,42 @@ if "justification" not in st.session_state:
 left_col, right_col = st.columns([2, 3], gap="large")
 
 with left_col:
-    st.markdown('<div class="panel">', unsafe_allow_html=True)
     st.subheader("Describe Your Purchase")
     st.caption(
         "Include as much detail as you have — project number, part, cost, vendor, and why you need it."
     )
 
-    user_input = st.text_area(
-        label="Purchase details",
-        label_visibility="collapsed",
-        placeholder=(
-            "e.g. Project 2419 — need to order a servo motor (part 4930-001-A) "
-            "from Acme Corp for $4,250. It's for assembly line axis 3 which is down. "
-            "We need it by end of week to hit the production milestone."
-        ),
-        height=220,
-        key="user_input_field",
-    )
-
-    st.markdown("---")
-
-    btn_col, clear_col = st.columns([3, 1])
-
-    with btn_col:
-        generate_btn = st.button(
-            "Generate Justification",
-            type="primary",
-            use_container_width=True,
-            disabled=not user_input.strip(),
+    with st.form(f"po_form_{st.session_state.form_reset}", border=False):
+        user_input = st.text_area(
+            label="Purchase details",
+            label_visibility="collapsed",
+            placeholder=(
+                "e.g. Project 2419 — need to order a servo motor (part 4930-001-A) "
+                "from Acme Corp for $4,250. It's for assembly line axis 3 which is down. "
+                "We need it by end of week to hit the production milestone."
+            ),
+            height=220,
         )
 
-    with clear_col:
-        if st.button("New PO", use_container_width=True):
-            st.session_state.justification = None
-            st.session_state.last_input = ""
-            del st.session_state["user_input_field"]
-            st.rerun()
+        st.markdown("---")
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        btn_col, clear_col = st.columns([3, 1])
+
+        with btn_col:
+            generate_btn = st.form_submit_button(
+                "Generate Justification",
+                type="primary",
+                use_container_width=True,
+            )
+
+        with clear_col:
+            clear_btn = st.form_submit_button("New PO", use_container_width=True)
+
+    if clear_btn:
+        st.session_state.justification = None
+        st.session_state.last_input = ""
+        st.session_state.form_reset += 1
+        st.rerun()
 
 with right_col:
 
