@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  upstream:
+    build:
+      context: ./upstream
+      dockerfile: Dockerfile
+    container_name: upstream-service
+    restart: unless-stopped
+    ports:
+      - 8501:8501
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    networks:
+      - envoymesh
+  envoy:
+    build:
+      context: ./envoy
+      dockerfile: Dockerfile
+    container_name: envoy
+    restart: unless-stopped
+    ports:
+      - 40080:40080
+      - 9901:9901
+    networks:
+      - envoymesh
+networks:
+  envoymesh: {}

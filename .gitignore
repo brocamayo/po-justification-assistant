@@ -1,6 +1,10 @@
 # Environment — never commit API keys
 .env
 
+# Envoy secrets — never commit real values
+envoy/token-secret.yaml
+envoy/hmac-secret.yaml
+
 # Python
 __pycache__/
 *.py[cod]
