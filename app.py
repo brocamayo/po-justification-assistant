@@ -112,6 +112,23 @@ def _build_export_text(j: dict, user_input: str) -> str:
     ])
 
 
+def _build_clipboard_text(j: dict) -> str:
+    """Just the four sections — no header/metadata — for clipboard copy."""
+    return "\n".join([
+        "WHAT",
+        j["what"],
+        "",
+        "WHY",
+        j["why"],
+        "",
+        "WHY NOW",
+        j["why_now"],
+        "",
+        "WHY GOOD VALUE",
+        j["why_good_value"],
+    ])
+
+
 def _clipboard_button(text: str) -> None:
     encoded = base64.b64encode(text.encode("utf-8")).decode()
     components.html(
@@ -247,6 +264,7 @@ with right_col:
         _section_card("Why Good Value", j["why_good_value"])
 
         full_text = _build_export_text(j, st.session_state.last_input)
+        clipboard_text = _build_clipboard_text(j)
         teams_ready = bool(os.getenv("TEAMS_WEBHOOK_URL"))
 
         a1, a2, a3 = st.columns(3)
@@ -261,7 +279,7 @@ with right_col:
             )
 
         with a2:
-            _clipboard_button(full_text)
+            _clipboard_button(clipboard_text)
 
         with a3:
             teams_btn = st.button(

@@ -72,7 +72,7 @@ Instructions:
 - Each section should be 2–4 concise sentences.
 - If certain details (e.g. exact cost or vendor) are not mentioned, write naturally around them.
 - Focus on business impact, operational necessity, and fiscal responsibility.
-- Whenever a project number or numeric code is referenced (e.g. "2419"), always format it as PCM-XXXX (e.g. PCM-2419).
+- If a project number or reference code is mentioned, preserve it exactly as given — do not reformat or invent a naming convention for it.
 """
 
     with client.messages.stream(
